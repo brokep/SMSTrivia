@@ -1,0 +1,4 @@
+.DS*
+account.txt
+__pycache__*
+
