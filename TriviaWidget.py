@@ -144,6 +144,7 @@ class TriviaWidget(QWidget):
             self.userData[user]["answer"] = ""
             self.userData[user]["score"] = 0
             self.userData[user]["time"] = 0
+            self.userData[user]["prevTime"] = 0
 
             self.table.setRowCount(self.connectedUsers)
 
@@ -157,8 +158,9 @@ class TriviaWidget(QWidget):
             self.userData[user]["answer"] = answer
             answerItem = QTableWidgetItem(answer)
             self.table.setItem(self.userData[user]["id"]-1, 2, answerItem)
+
             timeDelta = time.time() - self.questionTime
-            self.userData[user]["time"] += float(timeDelta)
+            self.userData[user]["time"] = self.userData[user]["prevTime"] + float(timeDelta)
             timeItem = QTableWidgetItem(str(self.userData[user]["time"]))
             self.table.setItem(self.userData[user]["id"]-1, 3, timeItem)
 
@@ -177,6 +179,7 @@ class TriviaWidget(QWidget):
                self.sendIncorrectAnswerMessage(user, userAnswer, correctAnswer)
            self.table.item(self.userData[user]["id"] - 1, 2).setText("")
            userAnswer = self.userData[user]["answer"] = ""
+           self.userData[user]["prevTime"] = self.userData[user]["time"]
 
     def sendCorrectAnswerMessage(self, user):
         contents = "Congratulations, you had the correct answer!\n"\
