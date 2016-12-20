@@ -8,10 +8,12 @@ from TriviaWindow import TriviaWindow
 from PySide.QtGui import QApplication, QIcon
 import sys
 import requests
+from subprocess import Popen,DEVNULL
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.secret_key = os.urandom(24)
+
 
 
 def runFlask():
@@ -27,20 +29,20 @@ def respond():
     if(window.centralWidget().registrationActive):
         if(state == 0):
             if(rx.lower().strip() == 'join'):
-                tx = "You have now joined Lake Orion Swim and Dive Trivia!\nGood luck!"
+                tx = "You have now joined Dragon Brain Buster!\nGood luck!"
                 state = 1
                 window.centralWidget().registerUser(sender)
             else:
-                tx = "Welcome to Lake Orion Swim and Dive Trivia!\nReply JOIN to join today's trivia challenge."
+                tx = "Welcome to Dragon Brain Buster!\nReply JOIN to join today's trivia challenge."
 
         elif(state == 1):
-            tx = "You have already joined Lake Orion Swim and Dive Trivia!\nPlease wait for the registration period to finish."
+            tx = "You have already joined Dragon Brain Buster!\nPlease wait for the registration period to finish."
 
         session['state'] = state
 
     elif(window.centralWidget().questionActive):
         if(state == 0):
-            tx = "Welcome to Lake Orion Swim and Dive Trivia!\nRegistration is currently closed, please try again next time."
+            tx = "Welcome to Dragon Brain Buster!\nRegistration is currently closed, please try again next time."
         elif(state == 1):
             answer = rx
             window.centralWidget().putAnswer(sender, answer)

@@ -7,5 +7,5 @@ class TriviaWindow(QMainWindow):
         super(TriviaWindow, self).__init__()
         widget = TriviaWidget()
         self.setCentralWidget(widget)
-        self.setWindowTitle("Lake Orion Swim and Dive Trivia")
+        self.setWindowTitle("Dragon Brain Buster")
         self.showMaximized()

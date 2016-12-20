@@ -2,6 +2,7 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from twilio.rest import TwilioRestClient
 import sys
+import time
 
 MY_NUMBER = ""
 class TriviaWidget(QWidget):
@@ -84,8 +85,8 @@ class TriviaWidget(QWidget):
         tableBox = QGroupBox("Participants")
 
         self.table = QTableWidget()
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(["Phone Number","Score","Current Answer"])
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["Phone Number","Score","Current Answer","Total Time (s)"])
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         tableLayout.addWidget(self.table)
@@ -125,16 +126,13 @@ class TriviaWidget(QWidget):
             self.questionButton.setText("End Question")
             self.regButton.setEnabled(False)
             self.notifyWinnersButton.setEnabled(False)
-            self.answers.setEnabled(False)
-            self.otherAnswer.setEnabled(False)
             self.questionActive = True
+            self.questionTime = time.time()
         else:
             self.scoreQuestion()
             self.questionButton.setText("Start Question")
             self.regButton.setEnabled(True)
             self.notifyWinnersButton.setEnabled(True)
-            self.answers.setEnabled(True)
-            self.otherAnswer.setEnabled(self.answers.currentText() == "Other")
             self.questionActive = False
 
     def registerUser(self, user):
@@ -144,6 +142,7 @@ class TriviaWidget(QWidget):
             self.userData[user]["id"] = self.connectedUsers
             self.userData[user]["answer"] = ""
             self.userData[user]["score"] = 0
+            self.userData[user]["time"] = 0
 
             self.table.setRowCount(self.connectedUsers)
 
@@ -157,6 +156,10 @@ class TriviaWidget(QWidget):
             self.userData[user]["answer"] = answer
             answerItem = QTableWidgetItem(answer)
             self.table.setItem(self.userData[user]["id"]-1, 2, answerItem)
+            timeDelta = time.time() - self.questionTime
+            self.userData[user]["time"] += float(timeDelta)
+            timeItem = QTableWidgetItem(str(self.userData[user]["time"]))
+            self.table.setItem(self.userData[user]["id"]-1, 3, timeItem)
 
     def scoreQuestion(self):
         correctAnswer = self.answers.currentText()
@@ -190,16 +193,16 @@ class TriviaWidget(QWidget):
 
     def sendResults(self):
         numWinners = int(self.numWinnersBox.cleanText())
-        leaderboard = sorted(self.userData, key = lambda k: self.userData[k]["score"], reverse=True)
+        leaderboard = sorted(self.userData, key = lambda k: (-self.userData[k]["score"], self.userData[k]["time"]))
         for i in range(0,min(numWinners, self.connectedUsers)):
             destination = leaderboard[i]
-            contents = "Congratulations, you won Lake Orion Swim and Dive Trivia!\n\n"\
-            + "Come to the Swim and Dive Office and present this text "\
+            contents = "Congratulations, you won Dragon Brain Buster!\n\n"\
+            + "Come to the concession stand and present this text "\
             + "to claim your prize.\n\nThanks for playing, and join us again next time!"
             self.client.messages.create(to=destination, from_=MY_NUMBER, body=contents)
         for i in range(numWinners, self.connectedUsers):
             destination = leaderboard[i]
-            contents = "Sorry, you did not win Lake Orion Swim and Dive Trivia.\n\n"\
+            contents = "Sorry, you did not win Dragon Brain Buster.\n\n"\
             + "Thanks for playing, and join us again next time!"
             self.client.messages.create(to=destination, from_=MY_NUMBER, body=contents)
 
