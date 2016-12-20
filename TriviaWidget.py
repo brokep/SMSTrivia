@@ -88,6 +88,7 @@ class TriviaWidget(QWidget):
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["Phone Number","Score","Current Answer","Total Time (s)"])
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
 
         tableLayout.addWidget(self.table)
         tableBox.setLayout(tableLayout)
