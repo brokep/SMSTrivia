@@ -177,7 +177,8 @@ class TriviaWidget(QWidget):
                self.sendCorrectAnswerMessage(user)
            else:
                self.sendIncorrectAnswerMessage(user, userAnswer, correctAnswer)
-           self.table.item(self.userData[user]["id"] - 1, 2).setText("")
+           if(self.table.item(self.userData[user]["id"]-1,2)):
+               self.table.item(self.userData[user]["id"] - 1, 2).setText("")
            userAnswer = self.userData[user]["answer"] = ""
            self.userData[user]["prevTime"] = self.userData[user]["time"]
 
